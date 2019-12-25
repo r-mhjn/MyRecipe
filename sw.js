@@ -53,28 +53,28 @@ self.addEventListener("activate", evt => {
 // dynamic caching, using this we need not bring all the pages into cache at once but we dynamically cache the pages when the user is online and request for those pages
 self.addEventListener("fetch", event => {
   // console.log("Fetch event ", event);
-  event.respondWith(
-    caches.match(event.request).then(cacheRes => {
-      return (
-        cacheRes ||
-        fetch(event.request)
-          .then(fetchRes => {
-            return caches
-              .open(dynamicCacheName)
-              .then(cache => {
-                cache.put(event.request.url, fetchRes.clone()); // this does not explicitly call the server to fetch the resouces
-                limitCacheSize(dynamicCacheName, dynamicCacheSize);
-                return fetchRes;
-              })
-              .catch(err => console.log(err));
-          })
-          .catch(() => {
-            if (event.request.url.indexOf(".html") > -1)
-              return caches.match("/pages/fallback.html");
-          }) // serving fallback pages
-      ); // if not in cache the  return to original fetch req from the server
-    })
-  );
+  //   event.respondWith(
+  //     caches.match(event.request).then(cacheRes => {
+  //       return (
+  //         cacheRes ||
+  //         fetch(event.request)
+  //           .then(fetchRes => {
+  //             return caches
+  //               .open(dynamicCacheName)
+  //               .then(cache => {
+  //                 cache.put(event.request.url, fetchRes.clone()); // this does not explicitly call the server to fetch the resouces
+  //                 limitCacheSize(dynamicCacheName, dynamicCacheSize);
+  //                 return fetchRes;
+  //               })
+  //               .catch(err => console.log(err));
+  //           })
+  //           .catch(() => {
+  //             if (event.request.url.indexOf(".html") > -1)
+  //               return caches.match("/pages/fallback.html");
+  //           }) // serving fallback pages
+  //       ); // if not in cache the  return to original fetch req from the server
+  //     })
+  //   );
 });
 
 // limiting cache size
