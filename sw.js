@@ -1,10 +1,12 @@
-const staticCacheName = "site-static-v2";
-const dynamicCache = "site-dynamic-v1";
+const staticCacheName = "site-static-v3";
+const dynamicCacheName = "site-dynamic-v1";
+const dynamicCacheSize = 20;
 const assets = [
   "/",
   "/index.html",
   "/js/app.js",
   "/js/ui.js",
+  "/pages/fallback.html",
   "/css/styles.css",
   "/img/dish.png",
   "https://fonts.googleapis.com/icon?family=Material+Icons",
@@ -40,7 +42,7 @@ self.addEventListener("activate", evt => {
       //console.log(keys);
       return Promise.all(
         keys
-          .filter(key => key != staticCacheName) // everything that we want to delete stays in the array then we map through the array and detele em all
+          .filter(key => key != staticCacheName && key != dynamicCacheName) // everything that we want to delete stays in the array then we map through the array and detele em all
           .map(key => caches.delete(key))
       );
     })
@@ -58,15 +60,33 @@ self.addEventListener("fetch", event => {
         fetch(event.request)
           .then(fetchRes => {
             return caches
-              .open(dynamicCache)
+              .open(dynamicCacheName)
               .then(cache => {
                 cache.put(event.request.url, fetchRes.clone()); // this does not explicitly call the server to fetch the resouces
+                limitCacheSize(dynamicCacheName, dynamicCacheSize);
                 return fetchRes;
               })
               .catch(err => console.log(err));
           })
-          .catch(err => console.log(err))
+          .catch(() => {
+            if (event.request.url.indexOf(".html") > -1)
+              return caches.match("/pages/fallback.html");
+          }) // serving fallback pages
       ); // if not in cache the  return to original fetch req from the server
     })
   );
 });
+
+// limiting cache size
+const limitCacheSize = (name, size) => {
+  caches
+    .open(name)
+    .then(cache => {
+      cache.keys().then(keys => {
+        if (keys.length > size) {
+          cache.delete(keys[0]).then(limitCacheSize(name, size)); // deletes the 1st items in the cache array
+        }
+      });
+    })
+    .catch(err => console.log(err));
+};

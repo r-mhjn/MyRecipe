@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -139,5 +140,27 @@
     <script src="/js/ui.js"></script>
     <!-- Registering the service worker with the browser with this js file -->
     <script src="/js/app.js"></script>
+    <script src="/js/db.js"></script>
+
+    <!-- Firebase -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.6.1/firebase-firestore.js"></script>
+
+    <script>
+      // Your web app's Firebase configuration
+      var firebaseConfig = {
+        apiKey: "AIzaSyCRZbQuwYnJEpIpEhXBG-vqnQD3Q27LtX0",
+        authDomain: "food-recipe-pwa-49d1f.firebaseapp.com",
+        databaseURL: "https://food-recipe-pwa-49d1f.firebaseio.com",
+        projectId: "food-recipe-pwa-49d1f",
+        storageBucket: "food-recipe-pwa-49d1f.appspot.com",
+        messagingSenderId: "393801372282",
+        appId: "1:393801372282:web:587fd9a1bb2fd56f16e1c3"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
   </body>
 </html>
